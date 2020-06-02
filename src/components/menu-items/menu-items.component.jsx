@@ -1,8 +1,12 @@
 import React from "react";
 import "./menu-items.style.scss";
+import { withRouter } from "react-router-dom";
 
 const MenuItem = (props) => (
-  <div className={`${props.size} menu-item`}>
+  <div
+    className={`${props.size} menu-item`}
+    onClick={() => props.history.push(`${props.match.url}${props.linkUrl}`)}
+  >
     <div
       className="background-image"
       style={{
@@ -16,4 +20,9 @@ const MenuItem = (props) => (
   </div>
 );
 
-export default MenuItem;
+/*
+withRouter is a higher-order function from react-router that will allow us to avoid prop drilling
+by returning a higher order of our MenuItem components to parent components. The higher order MenuItem component
+will now have access to browser history props and match props that we'll need.
+*/
+export default withRouter(MenuItem);
