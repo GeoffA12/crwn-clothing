@@ -9,7 +9,7 @@ import { Route, Switch } from "react-router-dom";
 Auth is a package that will let us store the state of our authenticated user on the app state 
 so that we can pass it into react components that need the user data.
 */
-import { auth } from "./firebase/firebase.utils";
+import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 
 class App extends React.Component {
   constructor() {
@@ -25,12 +25,28 @@ class App extends React.Component {
     We don;t want to have to re-mount the entire applciation every time someone is authenticated. So we can  
     include auth package from firebase in our componentDidMount() to prevent this.
     */
-    auth.onAuthStateChanged((user) => {
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       /*This will also give us user session storage persistence out of the box thanks to firebase */
-      this.setState({
-        currentUser: user,
-      });
-      console.log(user);
+      if (userAuth) {
+        const userRef = await createUserProfileDocument(userAuth);
+        userRef.onSnapshot((snapShot) => {
+          this.setState(
+            {
+              currentUser: {
+                id: snapShot.id,
+                ...snapShot.data(),
+              },
+            },
+            () => {
+              console.log(this.state);
+            }
+          );
+        });
+      } else {
+        this.setState({
+          currentUser: userAuth,
+        });
+      }
     });
   }
   /* Unsubscribe the user form our application to avoid memory leaks in the applciation.
