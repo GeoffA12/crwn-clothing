@@ -4,7 +4,7 @@ import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
 import Header from "./components/header/header.component.jsx";
 import SignInAndSignUp from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { setCurrentUser } from "./redux/user/user.actions";
 
@@ -13,6 +13,7 @@ Auth is a package that will let us store the state of our authenticated user on 
 so that we can pass it into react components that need the user data.
 */
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
+import SignIn from "./components/sign-in/sign-in.component";
 
 class App extends React.Component {
   unsubscribeFromAuth = null;
@@ -57,16 +58,27 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
-          <Route path="/signin" component={SignInAndSignUp} />
+          {/* render is a javascript parameter to react router that we can use to tell react
+          router which component we want to render on the page. */}
+          <Route
+            exact
+            path="/signin"
+            render={() =>
+              this.props.currentUser ? <Redirect to="/" /> : <SignInAndSignUp />
+            }
+          />
         </Switch>
       </div>
     );
   }
 }
 
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
 /*
 Function that will receive a dispatch and return an object where the props name is whatever prop that we     
-want to pass in that will dispatch the new action that we're trying to invole, which is setCurrentUser(). 
+want to pass in that will dispatch the new action that we're trying to invoke, which is setCurrentUser(). 
 */
 const mapDispatchToProps = (dispatch) => ({
   // Dispatch is a way for redux to know that whatever object is passed is an action object that will be
@@ -80,4 +92,4 @@ this anymore because we don't need access to currentUser in our App component. O
 to the Header component, App doesn't need to care about state of currentUser. So we can include null as our      
 first argument here. 
 */
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
