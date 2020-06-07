@@ -4,12 +4,15 @@ we can catch them with the redux reducers and pass them to update the redux stor
 */
 import { createStore, applyMiddleware } from "redux";
 import { logger } from "redux-logger";
+import { persistStore } from "redux-persist";
 
 import rootReducer from "./root-reducer";
 
-// Logger can be viewed as a function which will help us debug
+// Logger can be viewed as a function which will help us debug redux state updates.
 const middlewares = [logger];
 
-const store = createStore(rootReducer, applyMiddleware(...middlewares));
+export const store = createStore(rootReducer, applyMiddleware(...middlewares));
 
-export default store;
+// Creating our new redux persist provider in our application that will allow us to implement local storage
+// in our react app
+export const persistor = persistStore(store);
