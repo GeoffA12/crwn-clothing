@@ -7,16 +7,15 @@ import SignInAndSignUp from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.com
 import { Route, Switch, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { setCurrentUser } from "./redux/user/user.actions";
-import { selectCurrentUser } from './redux/user/user.selector';
-import { createStructuredSelector } from 'reselect'
-import CheckoutPage from './pages/checkout/checkout.component';
+import { selectCurrentUser } from "./redux/user/user.selector";
+import { createStructuredSelector } from "reselect";
+import CheckoutPage from "./pages/checkout/checkout.component";
 
 /*
 Auth is a package that will let us store the state of our authenticated user on the app state 
 so that we can pass it into react components that need the user data.
 */
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
-
 
 class App extends React.Component {
   unsubscribeFromAuth = null;
@@ -60,6 +59,8 @@ class App extends React.Component {
         <Header />
         <Switch>
           <Route exact path="/" component={HomePage} />
+          {/* Here our shop page is being nested in a route. Therefore we get access to 
+          match location and history objects in the ShopPage component.  */}
           <Route path="/shop" component={ShopPage} />
           <Route exact path="/checkout" component={CheckoutPage} />
           {/* render is a javascript parameter to react router that we can use to tell react
@@ -78,7 +79,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  currentUser: selectCurrentUser,
 });
 /*
 Function that will receive a dispatch and return an object where the props name is whatever prop that we     
