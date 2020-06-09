@@ -9,7 +9,14 @@ import { persistStore } from "redux-persist";
 import rootReducer from "./root-reducer";
 
 // Logger can be viewed as a function which will help us debug redux state updates.
-const middlewares = [logger];
+const middlewares = [];
+
+/* Inside of node there's an environment variable for NODE_ENV. Create-react-app will set an    
+environment variable for us by default which we can access through the code below. This code    
+will allow us to know whether or not or app is being served locally or in production. */
+if (process.env.NODE_ENV === "development") {
+  middlewares.push(logger);
+}
 
 export const store = createStore(rootReducer, applyMiddleware(...middlewares));
 
